@@ -17,6 +17,67 @@
       height: 100vh;
     }
 
+    .github-ribbon-wrap {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 160px;
+      height: 160px;
+      overflow: hidden;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .github-ribbon {
+      position: absolute;
+      display: block;
+      top: 30px;
+      right: -42px;
+      transform: rotate(45deg);
+      background: #24292f;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+      white-space: nowrap;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 8px 56px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      pointer-events: auto;
+    }
+
+    .github-ribbon:hover,
+    .github-ribbon:focus-visible {
+      background: #1b1f23;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 640px) {
+      .github-ribbon-wrap {
+        width: 144px;
+        height: 144px;
+      }
+
+      .github-ribbon {
+        top: 28px;
+        right: -48px;
+        font-size: 0.68rem;
+        padding: 7px 56px;
+      }
+    }
+
     header {
       background: #1a365d;
       color: white;
@@ -237,6 +298,11 @@
   </style>
 </head>
 <body>
+
+<div class="github-ribbon-wrap">
+  <a class="github-ribbon" href="https://github.com/payne/wllm1" target="_blank" rel="noopener noreferrer" aria-describedby="github-ribbon-note">Fork me on GitHub</a>
+  <span id="github-ribbon-note" class="sr-only">Opens in a new tab.</span>
+</div>
 
 <header>
   <h1>📻 Radio Club Knowledge Assistant</h1>
