@@ -387,7 +387,7 @@ async function getRuntimeInfo() {
   return info;
 }
 
-function getPreferredModelChain(runtimeInfo) {
+function getPreferredModelPlan(runtimeInfo) {
   const storageLimit = runtimeInfo.adapterLimits?.maxStorageBufferBindingSize || null;
   const veryConstrained =
     (runtimeInfo.deviceMemory && runtimeInfo.deviceMemory <= 2) ||
@@ -398,17 +398,26 @@ function getPreferredModelChain(runtimeInfo) {
     (runtimeInfo.deviceMemory && runtimeInfo.deviceMemory <= 4);
 
   if (veryConstrained) {
-    return ["SmolLM2-360M-Instruct-q4f16_1-MLC"];
+    return {
+      models: ["SmolLM2-360M-Instruct-q4f16_1-MLC"],
+      selectionMode: "device-optimized",
+    };
   }
 
   if (constrained) {
-    return [
-      "Llama-3.2-1B-Instruct-q4f16_1-MLC",
-      "SmolLM2-360M-Instruct-q4f16_1-MLC",
-    ];
+    return {
+      models: [
+        "Llama-3.2-1B-Instruct-q4f16_1-MLC",
+        "SmolLM2-360M-Instruct-q4f16_1-MLC",
+      ],
+      selectionMode: "device-optimized",
+    };
   }
 
-  return MODEL_FALLBACK_CHAIN;
+  return {
+    models: MODEL_FALLBACK_CHAIN,
+    selectionMode: "default",
+  };
 }
 
 function buildDiagnosticMessage(err, runtimeInfo, modelId) {
@@ -460,7 +469,7 @@ function rememberHandledError(err) {
   const now = Date.now();
   const message = extractErrorMessage(err);
   const expiredMessages = [];
-  for (const [knownMessage, timestamp] of recentlyHandledErrors.entries()) {
+  for (const [knownMessage, timestamp] of [...recentlyHandledErrors.entries()]) {
     if (now - timestamp > 10000) {
       expiredMessages.push(knownMessage);
     }
@@ -513,8 +522,7 @@ window.loadModel = async function () {
       throw new Error(runtimeInfo.adapterError);
     }
 
-    const modelChain = getPreferredModelChain(runtimeInfo);
-    const isDefaultChain = modelChain === MODEL_FALLBACK_CHAIN;
+    const { models: modelChain, selectionMode } = getPreferredModelPlan(runtimeInfo);
     const failures = [];
 
     for (const modelId of modelChain) {
@@ -540,12 +548,12 @@ window.loadModel = async function () {
         questionEl.focus();
         loadBtn.closest(".msg")?.remove();
         const usedBackupModel = modelId !== modelChain[0];
-        const successMessage =
-          usedBackupModel
-            ? `✅ Loaded a more compatible backup model (${describeModel(modelId)}).`
-            : isDefaultChain
-              ? `✅ AI model loaded (${describeModel(modelId)}).`
-              : `✅ Loaded the device-optimized model (${describeModel(modelId)}).`;
+        let successMessage = `✅ AI model loaded (${describeModel(modelId)}).`;
+        if (usedBackupModel) {
+          successMessage = `✅ Loaded a more compatible backup model (${describeModel(modelId)}).`;
+        } else if (selectionMode === "device-optimized") {
+          successMessage = `✅ Loaded the device-optimized model (${describeModel(modelId)}).`;
+        }
         addMessage(
           "system",
           successMessage
