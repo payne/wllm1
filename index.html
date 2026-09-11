@@ -455,10 +455,14 @@ function reportUnexpectedError(prefix, err) {
 function rememberHandledError(err) {
   const message = extractErrorMessage(err);
   recentlyHandledErrors.set(message, Date.now());
+  const expiredMessages = [];
   for (const [knownMessage, timestamp] of recentlyHandledErrors.entries()) {
     if (Date.now() - timestamp > 10000) {
-      recentlyHandledErrors.delete(knownMessage);
+      expiredMessages.push(knownMessage);
     }
+  }
+  for (const knownMessage of expiredMessages) {
+    recentlyHandledErrors.delete(knownMessage);
   }
 }
 
@@ -612,11 +616,12 @@ ${LARC_VEC_CONTENT}
 };
 
 window.addEventListener("error", (event) => {
-  if (wasRecentlyHandled(event.error || event.message)) {
+  const errorValue = event.error ?? event.message;
+  if (wasRecentlyHandled(errorValue)) {
     return;
   }
   if (event.message) {
-    reportUnexpectedError("Page error", event.error || event.message);
+    reportUnexpectedError("Page error", errorValue);
   }
 });
 
