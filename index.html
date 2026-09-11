@@ -457,10 +457,14 @@ function rememberHandledError(err) {
   const now = Date.now();
   const message = extractErrorMessage(err);
   recentlyHandledErrors.set(message, now);
+  const expiredMessages = [];
   for (const [knownMessage, timestamp] of recentlyHandledErrors.entries()) {
     if (now - timestamp > 10000) {
-      recentlyHandledErrors.delete(knownMessage);
+      expiredMessages.push(knownMessage);
     }
+  }
+  for (const knownMessage of expiredMessages) {
+    recentlyHandledErrors.delete(knownMessage);
   }
 }
 
@@ -531,7 +535,9 @@ window.loadModel = async function () {
         sendBtn.disabled = false;
         questionEl.focus();
         loadBtn.closest(".msg")?.remove();
-        const usingDefaultModelChain = modelChain[0] === MODEL_FALLBACK_CHAIN[0];
+        const usingDefaultModelChain =
+          modelChain.length === MODEL_FALLBACK_CHAIN.length &&
+          modelChain.every((candidateModelId, index) => candidateModelId === MODEL_FALLBACK_CHAIN[index]);
         const usedBackupModel = modelId !== modelChain[0];
         const successMessage =
           usedBackupModel
