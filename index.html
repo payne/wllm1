@@ -17,6 +17,36 @@
       height: 100vh;
     }
 
+    .github-ribbon {
+      position: fixed;
+      top: 18px;
+      right: -52px;
+      z-index: 10;
+      transform: rotate(45deg);
+      background: #24292f;
+      color: white;
+      text-decoration: none;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 8px 56px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .github-ribbon:hover,
+    .github-ribbon:focus-visible {
+      background: #1b1f23;
+    }
+
+    @media (max-width: 640px) {
+      .github-ribbon {
+        top: 14px;
+        right: -60px;
+        font-size: 0.68rem;
+        padding: 7px 56px;
+      }
+    }
+
     header {
       background: #1a365d;
       color: white;
@@ -237,6 +267,8 @@
   </style>
 </head>
 <body>
+
+<a class="github-ribbon" href="https://github.com/payne/wllm1" target="_blank" rel="noopener noreferrer" aria-label="Fork me on GitHub">Fork me on GitHub</a>
 
 <header>
   <h1>📻 Radio Club Knowledge Assistant</h1>
