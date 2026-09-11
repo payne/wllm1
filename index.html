@@ -534,11 +534,15 @@ window.loadModel = async function () {
         sendBtn.disabled = false;
         questionEl.focus();
         loadBtn.closest(".msg")?.remove();
+        const successMessage =
+          modelId !== modelChain[0]
+            ? `✅ Loaded a smaller fallback model for this device (${describeModel(modelId)}).`
+            : modelId === MODEL_FALLBACK_CHAIN[0]
+              ? `✅ AI model loaded (${describeModel(modelId)}).`
+              : `✅ Loaded the device-optimized model (${describeModel(modelId)}).`;
         addMessage(
           "system",
-          modelId === MODEL_FALLBACK_CHAIN[0]
-            ? `✅ AI model loaded (${describeModel(modelId)}).`
-            : `✅ Loaded a smaller fallback model for this device (${describeModel(modelId)}).`
+          successMessage
         );
         return;
       } catch (err) {
