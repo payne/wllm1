@@ -453,11 +453,12 @@ function reportUnexpectedError(prefix, err) {
 }
 
 function rememberHandledError(err) {
+  const now = Date.now();
   const message = extractErrorMessage(err);
-  recentlyHandledErrors.set(message, Date.now());
+  recentlyHandledErrors.set(message, now);
   const expiredMessages = [];
   for (const [knownMessage, timestamp] of recentlyHandledErrors.entries()) {
-    if (Date.now() - timestamp > 10000) {
+    if (knownMessage !== message && now - timestamp > 10000) {
       expiredMessages.push(knownMessage);
     }
   }
@@ -470,6 +471,12 @@ function wasRecentlyHandled(err) {
   const message = extractErrorMessage(err);
   const timestamp = recentlyHandledErrors.get(message);
   return Boolean(timestamp && Date.now() - timestamp < 10000);
+}
+
+function formatLoadFailureSummary(failures) {
+  return failures
+    .map(({ modelId, error }) => `- ${formatModelName(modelId)}: ${extractErrorMessage(error)}`)
+    .join("\n");
 }
 
 function autoResize(el) {
@@ -536,12 +543,14 @@ window.loadModel = async function () {
         return;
       } catch (err) {
         rememberHandledError(err);
-        failures.push(buildDiagnosticMessage(err, runtimeInfo, modelId));
-        console.error(`Failed to load ${modelId}`, err);
+        failures.push({ modelId, error: err });
+        console.error(`Failed to load ${modelId}\n${buildDiagnosticMessage(err, runtimeInfo, modelId)}`);
       }
     }
 
-    throw new Error(failures.join("\n\n---\n\n"));
+    throw new Error(
+      "All compatible models failed to load.\n\nTried:\n" + formatLoadFailureSummary(failures)
+    );
   } catch (err) {
     rememberHandledError(err);
     progressBar.style.display = "none";
@@ -617,12 +626,13 @@ ${LARC_VEC_CONTENT}
 
 window.addEventListener("error", (event) => {
   const errorValue = event.error ?? event.message;
+  if (!errorValue) {
+    return;
+  }
   if (wasRecentlyHandled(errorValue)) {
     return;
   }
-  if (event.message) {
-    reportUnexpectedError("Page error", errorValue);
-  }
+  reportUnexpectedError("Page error", errorValue);
 });
 
 window.addEventListener("unhandledrejection", (event) => {
