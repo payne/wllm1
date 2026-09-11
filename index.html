@@ -458,7 +458,7 @@ function rememberHandledError(err) {
   recentlyHandledErrors.set(message, now);
   const expiredMessages = [];
   for (const [knownMessage, timestamp] of recentlyHandledErrors.entries()) {
-    if (knownMessage !== message && now - timestamp > 10000) {
+    if (now - timestamp > 10000) {
       expiredMessages.push(knownMessage);
     }
   }
@@ -536,7 +536,7 @@ window.loadModel = async function () {
         loadBtn.closest(".msg")?.remove();
         addMessage(
           "system",
-          modelId === modelChain[0]
+          modelId === MODEL_FALLBACK_CHAIN[0]
             ? `✅ AI model loaded (${describeModel(modelId)}).`
             : `✅ Loaded a smaller fallback model for this device (${describeModel(modelId)}).`
         );
