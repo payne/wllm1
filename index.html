@@ -284,6 +284,7 @@ const MODEL_RECORDS = new Map(
 
 let engine = null;
 let isGenerating = false;
+const recentlyHandledErrors = new Map();
 
 const statusBar = document.getElementById("status-bar");
 const statusText = document.getElementById("status-text");
@@ -451,6 +452,22 @@ function reportUnexpectedError(prefix, err) {
   setStatus("Unexpected error — see details below", "");
 }
 
+function rememberHandledError(err) {
+  const message = extractErrorMessage(err);
+  recentlyHandledErrors.set(message, Date.now());
+  for (const [knownMessage, timestamp] of recentlyHandledErrors.entries()) {
+    if (Date.now() - timestamp > 10000) {
+      recentlyHandledErrors.delete(knownMessage);
+    }
+  }
+}
+
+function wasRecentlyHandled(err) {
+  const message = extractErrorMessage(err);
+  const timestamp = recentlyHandledErrors.get(message);
+  return Boolean(timestamp && Date.now() - timestamp < 10000);
+}
+
 function autoResize(el) {
   el.style.height = "auto";
   el.style.height = Math.min(el.scrollHeight, 120) + "px";
@@ -514,6 +531,7 @@ window.loadModel = async function () {
         );
         return;
       } catch (err) {
+        rememberHandledError(err);
         failures.push(buildDiagnosticMessage(err, runtimeInfo, modelId));
         console.error(`Failed to load ${modelId}`, err);
       }
@@ -521,6 +539,7 @@ window.loadModel = async function () {
 
     throw new Error(failures.join("\n\n---\n\n"));
   } catch (err) {
+    rememberHandledError(err);
     progressBar.style.display = "none";
     questionEl.disabled = true;
     sendBtn.disabled = true;
@@ -581,6 +600,7 @@ ${LARC_VEC_CONTENT}
 
     setStatus("Model ready — ask your question!", "ready");
   } catch (err) {
+    rememberHandledError(err);
     typingEl.remove();
     addMessage("error", "Generation error: " + extractErrorMessage(err));
     setStatus("Generation failed — see details below", "");
@@ -592,12 +612,18 @@ ${LARC_VEC_CONTENT}
 };
 
 window.addEventListener("error", (event) => {
+  if (wasRecentlyHandled(event.error || event.message)) {
+    return;
+  }
   if (event.message) {
     reportUnexpectedError("Page error", event.error || event.message);
   }
 });
 
 window.addEventListener("unhandledrejection", (event) => {
+  if (wasRecentlyHandled(event.reason)) {
+    return;
+  }
   reportUnexpectedError("Unhandled promise rejection", event.reason);
 });
 
