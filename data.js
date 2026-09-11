@@ -216,3 +216,206 @@ Warning: If the $35 fee is not paid within 10 calendar days of FCC receipt of th
 - HamExam.org (practice): https://www.HamExam.org
 - QRZ Practice Exams: https://www.qrz.com/hamtest
 `;
+
+export const AK_SAR_BEN_BYLAWS_CONTENT = `
+# AK-SAR-BEN Amateur Radio Club Bylaws
+
+Originally adopted December 12, 2006 | Amended February 8, 2008 | Amended January 13, 2012
+
+---
+
+## ARTICLE I: MEMBERSHIP
+
+### Section 1 – NONDISCRIMINATORY POLICY
+The club will be nondiscriminatory and membership shall be open to all individuals. The club shall accept applicants of any race, color, national or ethnic origin, age, sex, religious preference, or physical limitation to all rights, privileges, programs and activities generally accorded to or made available to members of the club. The club board has the right to refuse membership to any amateur radio operator based upon that person's radio operating history; verbal/written statements regarding other amateur radio operators, clubs, organizations, etc.; and/or violations of any FCC rules.
+
+### Section 2 – APPLICATION FOR ALL MEMBERSHIP CLASSES
+Applications for membership shall be submitted by the prospective member to any elected club officer or the membership chairperson. The application shall be signed indicating the applicant's agreement to abide by the bylaws and any other rules promulgated by the club. All applications received shall be submitted to the secretary. The secretary shall insure that the application is complete. The applicant will then be introduced to those attending the next general membership meeting. Approval is by a simple majority vote of the members attending. Membership dues will not be collected or accepted until the application has been approved. The secretary will add the accepted member to the membership roster, collect and give the dues to the treasurer.
+
+### Section 3 – MEMBERSHIP CLASSES
+The following paragraphs define the various membership classes.
+
+- **A. REGULAR Membership:** An individual membership.
+- **B. SPOUSE Membership:** Husband or wife of a regular member.
+- **C. MINOR/DEPENDENT Membership:** A child or legal dependent through their 18th year, residing at the same address of a regular or life member.
+- **D. STUDENT Membership:** A student enrolled full time in an accredited educational institution.
+- **E. LIFE Membership:**
+  1. **LIFE Membership** – Life membership fees paid for a regular member.
+  2. **SPOUSE LIFE Membership** – Life membership fees paid for a spouse member.
+  3. **HONORARY LIFE Membership** – membership nominated by the membership and approved by two-thirds of the votes cast at two consecutive general membership meeting or nominated by the board and approved at the next general membership meeting.
+  4. **CHARTER LIFE Membership** – member of the Ak-Sar-Ben Amateur Radio Club electing Life membership when life membership was first offered.
+
+### Section 4
+Only members holding a valid amateur radio license shall have full voting rights at club meetings, and shall be eligible to hold an office or to sit on the Board of Directors.
+
+### Section 5
+Only Regular, Student and Life members shall receive newsletters.
+
+### Section 6 – FORFEITURE OF MEMBERSHIP
+A member may be dropped from membership if:
+
+- **A.** The member does not pay annual dues by March 1st of each year.
+- **B.** The member submits a written resignation and shall forfeit all dues paid.
+- **C.** The Federal Communications Commission cancels the member's amateur radio license and shall forfeit all dues paid.
+- **D. Undesirable Conduct:** The club may forfeit membership for "just cause" based upon that member's radio operating history; verbal/written statements regarding other members, clubs, organizations, etc.; persistent violations of club repeater (or any other repeater) guidelines; and/or violations of any FCC rules. In order for a membership to be forfeited for "just cause" a motion must be made and approved by 2/3 of the voting members present at two consecutive general membership meetings. A notice of forfeiture for just causes shall be by written notice from the board, and shall be effective as of the date of the written notice. A member terminated by the club for "just cause" shall forfeit all dues paid.
+
+---
+
+## ARTICLE II: DUES
+
+### Section 1 – MEMBERSHIPS
+All members except life members shall pay dues. Dues are assessed for the period January 1st through December 31st and are payable annually. The board shall set the dues to be assessed to applicable membership classes.
+
+---
+
+## ARTICLE III: OFFICERS AND BOARD OF DIRECTORS
+
+### Section 1 – ELECTIONS
+- **A.** By September of each year, the president shall designate a nominating committee whose duty it shall be to nominate the officers and board members to be elected at the next annual meeting. The committee shall consist of at least three members, with the club's immediate past president as chairperson. The nominating committee shall nominate at least one member to fill each position. The positions shall be president, vice-president and four directors.
+- **B.** 30 days prior to the annual meeting, the president shall present to each voting member a written report of the nominating committee selection.
+- **C.** The election of officers and directors shall take place at the annual meeting each year by a majority vote of the voting members present. In addition to the nominating committee's slate, further nominations may be made by any member during the annual meeting.
+- **D.** Officers, president and vice-president, shall serve for a term of one year and secretary and treasurer shall serve for a term of two years. All directors shall serve for a term of two years. The term of the office shall begin at the conclusion of the annual meeting.
+- **E.** If the position of secretary and/or treasurer becomes vacant, those positions should be chosen from among the directors by the board at its next meeting.
+
+### Section 2 – PRESIDENT
+The PRESIDENT shall preside over all meetings. The president shall be responsible for the orderly conduct of business at all meetings. The president shall appoint all committee chairpersons and shall be an ex officio member of all committees. The president shall be responsible for compliance with the bylaws of the club. The president shall be responsible for insuring that all required club documents are filed with the appropriate agencies, and that the documents are current and up-to-date. The president shall perform all other duties customary to the office of the president. The President shall also be an ex-officio non-voting member of the Board of Directors the year(s) following the conclusion of their term as President.
+
+### Section 3 – VICE PRESIDENT
+The VICE-PRESIDENT shall work closely with the president and shall be prepared at all times to act as president when the president is absent, assuming all rights, duties, and privileges of the office of the president. The vice-president shall serve as the chairperson of the program committee. The vice-president shall perform all other duties customary to the office of the vice-president, and any other duties assigned by the president.
+
+### Section 4 – SECRETARY
+The SECRETARY shall serve as official recorder for the club. The secretary shall have charge of all correspondence and shall maintain an accurate record of the proceedings (minutes) at all club meetings. The secretary shall receive, from the membership chairperson, and process all applications for membership. The secretary shall keep the bylaws, shall record proposed and approved amendments thereto, and shall have a copy of the current bylaws available at all meetings of the club for access by the membership.
+
+### Section 5 – TREASURER
+The TREASURER shall be responsible for receiving, disbursing, and accounting for all club funds. The treasurer shall receive, shall properly deposit, and shall record all club income. The treasurer shall pay no bills without proper authorization of the board or the general membership. The treasurer shall pay all duly authorized expenditures of the club. The treasurer shall insure that proper receipts exist for all transactions. The treasurer shall prepare financial reports as directed by either the president or board. The treasurer shall maintain an accurate record of all club financial transactions and shall provide the board and the membership with a monthly report of all transactions.
+
+### Section 6 – DIRECTORS
+There shall be four directors, two of which shall serve as the secretary and treasurer. They shall be authorized to suggest policies, new projects, programs and to carry on such business as may be required in the general operation of the club.
+
+### Section 6A – EX-OFFICIO MEMBER
+The Last Past President shall serve as a non-voting ex-officio member of the Board of Directors.
+
+### Section 7 – REMOVAL FROM OFFICE
+Any elected officer may be removed from office for just cause based upon a written motion (including details for just cause) signed by ten percent of the club's voting membership, and approved by a two-thirds vote of the voting members present at two consecutive general membership meetings.
+
+### Section 8 – ABSENCES AND VACANCIES
+1. In case the secretary or treasurer are unable to attend a meeting for any reason, the president may appoint an assistant secretary or an assistant treasurer, as appropriate, to serve during the absence.
+2. A vacancy of a membership elected office which occurs during the term of office shall be filled by special ballot at the first general membership meeting after the vacancy occurs. Nominations shall be taken and voted on at the meeting.
+
+---
+
+## ARTICLE IV: COMMITTEES
+
+The following standing committees shall operate within this club:
+
+### Section 1 – Program Committee
+This committee shall consist of at least two members, with the club's vice-president as chairperson. It shall be the duty of this committee to provide programs for all regular meetings.
+
+### Section 2 – Public Service/Emergency Committee
+This committee shall consist of at least two members. It shall plan for emergencies and act as a liaison with other amateur radio emergency organizations, e.g., ARES, RACES, SATERN.
+
+### Section 3 – Education Committee
+This committee shall consist of at least three members. It shall be the duty of this committee to plan and execute a training program for future amateur operators.
+
+### Section 4 – Publications/Web Services Committee
+This committee shall consist of at least three members. It shall be the duty of this committee to plan, publish and maintain the club monthly publication, "Ham Hum" and the club's web site.
+
+### Section 5 – Finance Committee
+This committee shall consist of at least three members, with the club's treasurer as chairperson. It shall be the duty of this committee to prepare the annual budget and provide assistance for any committee requiring the expenditure of funds as part of their activities.
+
+### Section 6 – Repeater Committee
+This committee shall consist of at least three members, one of which shall be the club's FCC License Trustee and one of which shall be a qualified radio technician. It shall be the duty of the committee to insure that the repeater is functioning properly, to arrange for repairs and/or adjustments when necessary, and to select and train sufficient control operators for said repeaters.
+
+### Section 7 – Membership Committee
+This committee shall consist of at least three members, one of which is the club secretary. It shall be the duty of this committee to receive and process all applications for membership, maintain an accurate record of all club members, which includes but is not be limited to, name, call sign, mailing address, club membership status, American Radio Relay League (ARRL) membership status, and a signed club membership application. The chairperson shall announce all new members at the regular membership meetings.
+
+### Section 8 – Field Day Committee
+This committee shall consist of at least three members. It shall coordinate activities in connection with Field Day, as authorized by the club, including the provisions of food for the Field Day workers.
+
+### Section 9 – Equipment Committee
+This committee shall consist of at least 3 members, at least one of which is an elected member of the Board of Directors. It shall be the duty of the committee to establish policies and procedures to identify, document and retain records of the physical assets of the club and where they are located. Using these policies and procedures the committee shall develop and accurately maintain these records and have them available to the Board of Directors and the membership. The committee shall also assist the Board of Directors and other committees in the determination of the best uses of current assets, acquisition of additional assets and proper disposition of various equipment.
+
+[Added 1-13-2012]
+
+### Section 10 – Other Committees
+The board may from time to time form other committees in furtherance of the interest of the club.
+
+[Renumbered from Section 9, 1-13-2012]
+
+---
+
+## ARTICLE V: MEETINGS AND QUORUMS
+
+### Section 1 – MEETINGS
+All meetings shall be open to members, guests and visitors. The location of all meetings shall be within the city of Omaha, Nebraska, unless approved by the board.
+
+### Section 2 – QUORUMS
+At meetings, a quorum shall be required for the transaction of business. Once a quorum is verified, all matters which concern the operation or business of the club shall be voted on and shall be considered passed by a simple majority vote of members present at any general membership meeting, or as otherwise specified in these bylaws. Quorums are defined as follows.
+
+- **A.** A quorum shall consist of a minimum of ten percent (10%) of total voting membership including at least two board members.
+- **B.** A quorum for the board meeting shall consist of a minimum of fifty percent (50%) of the elected board members. Any vote taken at a board meeting must carry by a simple majority vote of the board in attendance.
+
+### Section 3 – MEMBERSHIP MEETINGS
+Meetings of the club shall normally be held monthly January through November as scheduled by the board. Regular business of the club shall be conducted during these meetings.
+
+### Section 4 – SPECIAL MEETINGS
+In December of each year, the general membership meeting shall be replaced by the ANNUAL Meeting, and shall be held for the primary purpose of electing board members and officers for the following calendar year, although other business may be conducted if time permits. The exact date and time of the annual meeting shall be determined by the availability of the site selected for the meeting, but shall be no later than the third Friday of December.
+
+### Section 5 – BOARD OF DIRECTORS MEETINGS
+Board of Directors meetings shall be held at the discretion of the president, but at least once each calendar quarter. The purpose of these meetings is to conduct club business and to plan and discuss future activities. The time and location shall be at the discretion of the president.
+
+---
+
+## ARTICLE VI: AMENDMENTS
+
+### Section 1 – PROPOSALS TO AMEND
+Proposals for amendments to the bylaws shall be submitted in writing at a membership meeting. The proposals shall be read to the members present, and upon approval of a two-thirds majority of those present, shall be further considered in accordance with Section 2 of this Article. The language of the proposal may be revised so long as the concept and intent of the original proposal is retained.
+
+### Section 2 – APPROVAL OF AMENDMENTS
+- **A.** The text of the proposed amendment, after due consideration by the voting board and/or duly appointed committee(s), shall be submitted to the general membership at least 30 days in advance of a vote.
+- **B.** A ballot shall be submitted to each member by mail, including any special voting instructions and deadlines. A proposed amendment to the bylaws shall be adopted if approved by two-thirds of the votes cast by the established deadline. A proposed amendment may also be adopted if approved by a simple majority of those voting in person at a duly noticed meeting.
+
+---
+
+## ARTICLE VII: RULES
+
+### Section 1
+Robert's Rules of Order Newly Revised shall govern all proceedings.
+
+### Section 2 – STANDING RULES
+The board shall establish a set of standard rules which shall govern the members and committees of the club. The secretary shall maintain the set of standard rules.
+
+---
+
+## Execution and Attestation
+
+The undersigned, being president of the club, states that these revised bylaws supersede all previous bylaws as amended, and privileges granted under earlier versions of the bylaws do not extend to this revision, these bylaws were adopted by the directors and approved by at least two thirds of the votes, which members present or represented by proxy were entitled to cast at a meeting of members on the AK-SAR-BEN Amateur Radio Club, at which a quorum was present, and does sign said bylaws this 13th day of January, 2012.
+
+Mary Joseph NØTRK  
+President
+
+I, being the secretary of the club, hereby attest that the above-named president of the club did sign the foregoing Bylaws in my presence on this 12th day of January, 2012.
+
+Bill True, WB9ASD  
+Secretary
+
+---
+
+## Change Log
+
+- **12-12-2006** — Bylaws originally passed
+- **2-8-2008** — Amended: ARTICLE III Sections 2, 6, 6A (new) | ARTICLE V Sections 2A, 2B | ARTICLE VI Sections 1, 2
+- **1-13-2012** — Amended: ARTICLE III Section 6 | ARTICLE IV Section 9 (new Equipment Committee), Section 9 renumbered to 10
+`;
+
+// Source note: This bylaw text was supplied in the task prompt.
+// Restoration note: ARTICLE III Sections 7 and 8 were included per the user-supplied restoration note,
+// but the note itself is excluded from the assistant's reference text to avoid mixing commentary with bylaws.
+
+export const REFERENCE_DOCUMENTS = `
+${LARC_VEC_CONTENT}
+
+============================================================
+
+${AK_SAR_BEN_BYLAWS_CONTENT}
+`;

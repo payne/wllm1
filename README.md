@@ -1,6 +1,6 @@
-# wllm1 — LARC VEC Assistant (Web-LLM Demo)
+# wllm1 — Radio Club Knowledge Assistant (Web-LLM Demo)
 
-An in-browser AI assistant for the [Laurel Amateur Radio Club VEC](https://larc-vec.org) — ask questions about becoming a Volunteer Examiner, exam session rules, FCC fees, and policies.
+An in-browser AI assistant for the [Laurel Amateur Radio Club VEC](https://larc-vec.org) and the AK-SAR-BEN Amateur Radio Club bylaws — ask questions about becoming a Volunteer Examiner, exam session rules, FCC fees, club governance, membership, and committees.
 
 Powered by [@mlc-ai/web-llm](https://github.com/mlc-ai/web-llm). The AI model runs **entirely in your browser** — no server, no API keys.
 
@@ -49,7 +49,10 @@ For the best results, use current Chrome or Edge on a desktop/laptop with WebGPU
 
 ## Data Source
 
-Content is from [`larc-vec.org/becomeve.php`](https://larc-vec.org/becomeve.php), stored in `data.js`.
+Content is bundled in `data.js` and currently includes:
+- Laurel VEC material from [`larc-vec.org/becomeve.php`](https://larc-vec.org/becomeve.php)
+- AK-SAR-BEN Amateur Radio Club bylaws supplied in this repository task
+
 Topics covered:
 - What is the Laurel VEC
 - VE qualifications & how to become a VE
@@ -58,3 +61,4 @@ Topics covered:
 - Exam session flow & retesting policy
 - FCC $35 application fee rules
 - Online/remote exam policy
+- AK-SAR-BEN membership classes, voting rights, dues, meetings, committees, elections, and amendments

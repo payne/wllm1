@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>LARC VEC Assistant</title>
+  <title>Radio Club Knowledge Assistant</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -239,8 +239,8 @@
 <body>
 
 <header>
-  <h1>📻 LARC VEC Assistant</h1>
-  <p>Ask questions about Laurel VEC rules, policies &amp; becoming a VE</p>
+  <h1>📻 Radio Club Knowledge Assistant</h1>
+  <p>Ask about Laurel VEC policies and the AK-SAR-BEN Amateur Radio Club bylaws</p>
 </header>
 
 <div id="progress-bar"><div id="progress-fill"></div></div>
@@ -252,7 +252,7 @@
 
 <div id="messages">
   <div class="msg system">
-    Welcome! This assistant answers questions about the <strong>Laurel Amateur Radio Club VEC</strong> — volunteer examiner rules, how to become a VE, exam session policies, fees, and more.<br><br>
+    Welcome! This assistant answers questions about the <strong>Laurel Amateur Radio Club VEC</strong> and the <strong>AK-SAR-BEN Amateur Radio Club bylaws</strong>.<br><br>
     <button id="load-btn" onclick="loadModel()">⚡ Load AI Model</button>
   </div>
 </div>
@@ -271,7 +271,7 @@
 
 <script type="module">
 import { CreateMLCEngine, prebuiltAppConfig } from "https://esm.run/@mlc-ai/web-llm";
-import { LARC_VEC_CONTENT } from "./data.js";
+import { REFERENCE_DOCUMENTS } from "./data.js";
 
 const MODEL_FALLBACK_CHAIN = [
   "Llama-3.2-3B-Instruct-q4f16_1-MLC",
@@ -601,11 +601,11 @@ window.sendQuestion = async function () {
 
   setStatus("Thinking…", "loading");
 
-  const systemPrompt = `You are a helpful assistant that answers questions about the Laurel Amateur Radio Club Volunteer Examiner Coordinator (LARC VEC). Use ONLY the following reference document to answer questions. Be concise and accurate. If the answer isn't in the document, say so.
+  const systemPrompt = `You are a helpful assistant that answers questions about the Laurel Amateur Radio Club Volunteer Examiner Coordinator (LARC VEC) and the AK-SAR-BEN Amateur Radio Club bylaws. Use ONLY the following reference documents to answer questions. Be concise and accurate. If the answer isn't in the documents, say so.
 
---- REFERENCE DOCUMENT ---
-${LARC_VEC_CONTENT}
---- END DOCUMENT ---`;
+--- REFERENCE DOCUMENTS ---
+${REFERENCE_DOCUMENTS}
+--- END DOCUMENTS ---`;
 
   try {
     const chunks = await engine.chat.completions.create({
