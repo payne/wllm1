@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>LARC VEC Assistant</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f0f4f8;
+      color: #1a202c;
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      height: 100vh;
+    }
+
+    header {
+      background: #1a365d;
+      color: white;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    header h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    header p {
+      font-size: 0.78rem;
+      opacity: 0.8;
+    }
+
+    #status-bar {
+      background: #2a4a7f;
+      color: #bee3f8;
+      font-size: 0.75rem;
+      padding: 6px 16px;
+      flex-shrink: 0;
+      min-height: 28px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #status-bar .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #fc8181;
+      flex-shrink: 0;
+    }
+
+    #status-bar.ready .dot { background: #68d391; }
+    #status-bar.loading .dot {
+      background: #f6e05e;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .msg {
+      max-width: 88%;
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .msg.user {
+      background: #3182ce;
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg.assistant {
+      background: white;
+      color: #1a202c;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .msg.system {
+      background: #ebf8ff;
+      color: #2c5282;
+      align-self: center;
+      font-size: 0.82rem;
+      text-align: center;
+      border-radius: 8px;
+      max-width: 95%;
+    }
+
+    .msg.error {
+      background: #fff5f5;
+      color: #c53030;
+      align-self: center;
+      font-size: 0.85rem;
+      border-radius: 8px;
+      max-width: 95%;
+    }
+
+    #input-area {
+      background: white;
+      border-top: 1px solid #e2e8f0;
+      padding: 10px 12px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+      flex-shrink: 0;
+      padding-bottom: max(10px, env(safe-area-inset-bottom));
+    }
+
+    #question {
+      flex: 1;
+      border: 1.5px solid #cbd5e0;
+      border-radius: 20px;
+      padding: 10px 16px;
+      font-size: 1rem;
+      resize: none;
+      outline: none;
+      max-height: 120px;
+      min-height: 42px;
+      line-height: 1.4;
+      font-family: inherit;
+      -webkit-appearance: none;
+    }
+
+    #question:focus {
+      border-color: #3182ce;
+    }
+
+    #send-btn {
+      background: #3182ce;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      -webkit-appearance: none;
+      transition: background 0.15s;
+    }
+
+    #send-btn:disabled {
+      background: #a0aec0;
+      cursor: not-allowed;
+    }
+
+    #send-btn:not(:disabled):active {
+      background: #2b6cb0;
+    }
+
+    #send-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    #progress-bar {
+      height: 3px;
+      background: #ebf4ff;
+      flex-shrink: 0;
+      display: none;
+    }
+
+    #progress-fill {
+      height: 100%;
+      background: #3182ce;
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    .typing {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      padding: 12px 14px;
+    }
+
+    .typing span {
+      width: 7px;
+      height: 7px;
+      background: #a0aec0;
+      border-radius: 50%;
+      animation: bounce 1.2s infinite;
+    }
+
+    .typing span:nth-child(2) { animation-delay: 0.2s; }
+    .typing span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-6px); }
+    }
+
+    #load-btn {
+      background: #2f855a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-top: 6px;
+      -webkit-appearance: none;
+    }
+
+    #load-btn:disabled {
+      background: #a0aec0;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>📻 LARC VEC Assistant</h1>
+  <p>Ask questions about Laurel VEC rules, policies &amp; becoming a VE</p>
+</header>
+
+<div id="progress-bar"><div id="progress-fill"></div></div>
+
+<div id="status-bar">
+  <div class="dot"></div>
+  <span id="status-text">Tap "Load AI Model" to begin (requires WebGPU — Chrome/Edge recommended; Safari 18+ on iOS)</span>
+</div>
+
+<div id="messages">
+  <div class="msg system">
+    Welcome! This assistant answers questions about the <strong>Laurel Amateur Radio Club VEC</strong> — volunteer examiner rules, how to become a VE, exam session policies, fees, and more.<br><br>
+    <button id="load-btn" onclick="loadModel()">⚡ Load AI Model</button>
+  </div>
+</div>
+
+<div id="input-area">
+  <textarea id="question" placeholder="Ask a question…" rows="1" disabled
+    onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+  <button id="send-btn" onclick="sendQuestion()" disabled title="Send">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+         stroke-linecap="round" stroke-linejoin="round">
+      <line x1="22" y1="2" x2="11" y2="13"/>
+      <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+    </svg>
+  </button>
+</div>
+
+<script type="module">
+import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
+import { LARC_VEC_CONTENT } from "./data.js";
+
+const MODEL_ID = "Llama-3.2-3B-Instruct-q4f16_1-MLC";
+
+let engine = null;
+let isGenerating = false;
+
+const statusBar = document.getElementById("status-bar");
+const statusText = document.getElementById("status-text");
+const messagesEl = document.getElementById("messages");
+const questionEl = document.getElementById("question");
+const sendBtn = document.getElementById("send-btn");
+const progressBar = document.getElementById("progress-bar");
+const progressFill = document.getElementById("progress-fill");
+const loadBtn = document.getElementById("load-btn");
+
+function setStatus(text, state = "loading") {
+  statusText.textContent = text;
+  statusBar.className = state;
+}
+
+function addMessage(role, text) {
+  const div = document.createElement("div");
+  div.className = `msg ${role}`;
+  div.textContent = text;
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+  return div;
+}
+
+function addTyping() {
+  const div = document.createElement("div");
+  div.className = "msg assistant";
+  div.id = "typing-indicator";
+  div.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+  return div;
+}
+
+function autoResize(el) {
+  el.style.height = "auto";
+  el.style.height = Math.min(el.scrollHeight, 120) + "px";
+}
+
+function handleKey(e) {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendQuestion();
+  }
+}
+
+window.loadModel = async function () {
+  loadBtn.disabled = true;
+  loadBtn.textContent = "Loading…";
+  progressBar.style.display = "block";
+
+  setStatus("Downloading model (first load ~150 MB, cached after)…", "loading");
+
+  try {
+    engine = await CreateMLCEngine(MODEL_ID, {
+      initProgressCallback: (report) => {
+        const pct = Math.round((report.progress || 0) * 100);
+        progressFill.style.width = pct + "%";
+        setStatus(`Loading model: ${report.text || pct + "%"}`, "loading");
+      },
+    });
+
+    progressBar.style.display = "none";
+    setStatus("Model ready — ask your question!", "ready");
+    questionEl.disabled = false;
+    sendBtn.disabled = false;
+    questionEl.focus();
+    loadBtn.closest(".msg").remove();
+    addMessage("system", "✅ AI model loaded! Ask anything about the Laurel VEC.");
+  } catch (err) {
+    progressBar.style.display = "none";
+    setStatus("Failed to load model: " + err.message, "");
+    loadBtn.disabled = false;
+    loadBtn.textContent = "⚡ Retry Loading Model";
+    addMessage("error", "Error loading model: " + err.message +
+      "\n\nWebGPU is required. Use Chrome 113+, Edge 113+, or Safari 18+ on a supported device.");
+  }
+};
+
+window.sendQuestion = async function () {
+  const question = questionEl.value.trim();
+  if (!question || !engine || isGenerating) return;
+
+  isGenerating = true;
+  sendBtn.disabled = true;
+  questionEl.value = "";
+  questionEl.style.height = "auto";
+
+  addMessage("user", question);
+
+  const typingEl = addTyping();
+
+  setStatus("Thinking…", "loading");
+
+  const systemPrompt = `You are a helpful assistant that answers questions about the Laurel Amateur Radio Club Volunteer Examiner Coordinator (LARC VEC). Use ONLY the following reference document to answer questions. Be concise and accurate. If the answer isn't in the document, say so.
+
+--- REFERENCE DOCUMENT ---
+${LARC_VEC_CONTENT}
+--- END DOCUMENT ---`;
+
+  try {
+    const chunks = await engine.chat.completions.create({
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: question },
+      ],
+      temperature: 0.2,
+      max_tokens: 512,
+      stream: true,
+    });
+
+    typingEl.remove();
+    const responseEl = addMessage("assistant", "");
+    let fullText = "";
+
+    for await (const chunk of chunks) {
+      const delta = chunk.choices[0]?.delta?.content || "";
+      fullText += delta;
+      responseEl.textContent = fullText;
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    setStatus("Model ready — ask your question!", "ready");
+  } catch (err) {
+    typingEl.remove();
+    addMessage("error", "Error: " + err.message);
+    setStatus("Error — try again", "");
+  }
+
+  isGenerating = false;
+  sendBtn.disabled = false;
+  questionEl.focus();
+};
+
+// expose for non-module inline onclick
+window.handleKey = handleKey;
+window.autoResize = autoResize;
+</script>
+
+</body>
+</html>
