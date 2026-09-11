@@ -270,10 +270,17 @@
 </div>
 
 <script type="module">
-import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
+import { CreateMLCEngine, prebuiltAppConfig } from "https://esm.run/@mlc-ai/web-llm";
 import { LARC_VEC_CONTENT } from "./data.js";
 
-const MODEL_ID = "Llama-3.2-3B-Instruct-q4f16_1-MLC";
+const MODEL_FALLBACK_CHAIN = [
+  "Llama-3.2-3B-Instruct-q4f16_1-MLC",
+  "Llama-3.2-1B-Instruct-q4f16_1-MLC",
+  "SmolLM2-360M-Instruct-q4f16_1-MLC",
+];
+const MODEL_RECORDS = new Map(
+  prebuiltAppConfig.model_list.map((record) => [record.model_id, record])
+);
 
 let engine = null;
 let isGenerating = false;
@@ -311,6 +318,139 @@ function addTyping() {
   return div;
 }
 
+function extractErrorMessage(err) {
+  if (!err) return "Unknown error";
+  if (typeof err === "string") return err;
+  if (err instanceof Error) return err.message || err.name;
+  if (typeof err.message === "string") return err.message;
+  try {
+    return JSON.stringify(err);
+  } catch {
+    return String(err);
+  }
+}
+
+function formatModelName(modelId) {
+  return modelId
+    .replace(/-MLC(?:-\d+k)?$/, "")
+    .replace(/-/g, " ");
+}
+
+function describeModel(modelId) {
+  const record = MODEL_RECORDS.get(modelId);
+  const memory = record?.vram_required_MB
+    ? ` (~${Math.round(record.vram_required_MB)} MB GPU memory)`
+    : "";
+  return `${formatModelName(modelId)}${memory}`;
+}
+
+function detectSafari() {
+  const ua = navigator.userAgent;
+  return /Safari/i.test(ua) && !/Chrome|Chromium|CriOS|Edg|OPR|Android/i.test(ua);
+}
+
+function detectMobile() {
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+}
+
+async function getRuntimeInfo() {
+  const info = {
+    webgpuSupported: Boolean(navigator.gpu),
+    deviceMemory: navigator.deviceMemory || null,
+    isMobile: detectMobile(),
+    isSafari: detectSafari(),
+    adapterError: null,
+    adapterLimits: null,
+  };
+
+  if (!navigator.gpu) {
+    return info;
+  }
+
+  try {
+    const adapter = await navigator.gpu.requestAdapter();
+    if (!adapter) {
+      info.adapterError = "No WebGPU adapter was available.";
+      return info;
+    }
+
+    info.adapterLimits = {
+      maxStorageBufferBindingSize: adapter.limits?.maxStorageBufferBindingSize || null,
+      maxBufferSize: adapter.limits?.maxBufferSize || null,
+    };
+  } catch (err) {
+    info.adapterError = extractErrorMessage(err);
+  }
+
+  return info;
+}
+
+function getPreferredModelChain(runtimeInfo) {
+  const storageLimit = runtimeInfo.adapterLimits?.maxStorageBufferBindingSize || null;
+  const veryConstrained =
+    (runtimeInfo.deviceMemory && runtimeInfo.deviceMemory <= 2) ||
+    (storageLimit && storageLimit < 512 * 1024 * 1024);
+  const constrained =
+    runtimeInfo.isMobile ||
+    runtimeInfo.isSafari ||
+    (runtimeInfo.deviceMemory && runtimeInfo.deviceMemory <= 4);
+
+  if (veryConstrained) {
+    return ["SmolLM2-360M-Instruct-q4f16_1-MLC"];
+  }
+
+  if (constrained) {
+    return [
+      "Llama-3.2-1B-Instruct-q4f16_1-MLC",
+      "SmolLM2-360M-Instruct-q4f16_1-MLC",
+    ];
+  }
+
+  return MODEL_FALLBACK_CHAIN;
+}
+
+function buildDiagnosticMessage(err, runtimeInfo, modelId) {
+  const lines = [
+    `Model: ${describeModel(modelId)}`,
+    `Error: ${extractErrorMessage(err)}`,
+  ];
+
+  if (!runtimeInfo.webgpuSupported) {
+    lines.push("WebGPU is not available in this browser.");
+  }
+
+  if (runtimeInfo.adapterError) {
+    lines.push(`WebGPU adapter: ${runtimeInfo.adapterError}`);
+  }
+
+  if (runtimeInfo.deviceMemory) {
+    lines.push(`Reported device memory: ${runtimeInfo.deviceMemory} GB`);
+  }
+
+  const storageLimit = runtimeInfo.adapterLimits?.maxStorageBufferBindingSize;
+  if (storageLimit) {
+    lines.push(`WebGPU max storage buffer: ${Math.round(storageLimit / 1024 / 1024)} MB`);
+  }
+
+  const message = extractErrorMessage(err);
+  if (/memory|allocation|device lost|context lost|destroyed|abort|internal/i.test(message)) {
+    lines.push("Likely cause: the model is too large or unstable for this device/browser.");
+  }
+
+  if (runtimeInfo.isSafari) {
+    lines.push("Tip: Chrome or Edge usually gives more reliable WebGPU behavior than Safari.");
+  }
+
+  return lines.join("\n");
+}
+
+function reportUnexpectedError(prefix, err) {
+  const message = `${prefix}: ${extractErrorMessage(err)}`;
+  console.error(prefix, err);
+  addMessage("error", message);
+  setStatus("Unexpected error — see details below", "");
+}
+
 function autoResize(el) {
   el.style.height = "auto";
   el.style.height = Math.min(el.scrollHeight, 120) + "px";
@@ -327,32 +467,72 @@ window.loadModel = async function () {
   loadBtn.disabled = true;
   loadBtn.textContent = "Loading…";
   progressBar.style.display = "block";
-
-  setStatus("Downloading model (first load ~150 MB, cached after)…", "loading");
+  progressFill.style.width = "0%";
+  setStatus("Checking browser and selecting a model…", "loading");
 
   try {
-    engine = await CreateMLCEngine(MODEL_ID, {
-      initProgressCallback: (report) => {
-        const pct = Math.round((report.progress || 0) * 100);
-        progressFill.style.width = pct + "%";
-        setStatus(`Loading model: ${report.text || pct + "%"}`, "loading");
-      },
-    });
+    const runtimeInfo = await getRuntimeInfo();
 
-    progressBar.style.display = "none";
-    setStatus("Model ready — ask your question!", "ready");
-    questionEl.disabled = false;
-    sendBtn.disabled = false;
-    questionEl.focus();
-    loadBtn.closest(".msg").remove();
-    addMessage("system", "✅ AI model loaded! Ask anything about the Laurel VEC.");
+    if (!runtimeInfo.webgpuSupported) {
+      throw new Error("WebGPU is not available in this browser.");
+    }
+
+    if (runtimeInfo.adapterError) {
+      throw new Error(runtimeInfo.adapterError);
+    }
+
+    const modelChain = getPreferredModelChain(runtimeInfo);
+    const failures = [];
+
+    for (const modelId of modelChain) {
+      progressFill.style.width = "0%";
+      setStatus(`Loading ${formatModelName(modelId)}…`, "loading");
+
+      try {
+        engine = await CreateMLCEngine(modelId, {
+          initProgressCallback: (report) => {
+            const pct = Math.round((report.progress || 0) * 100);
+            progressFill.style.width = pct + "%";
+            setStatus(
+              `Loading ${formatModelName(modelId)}: ${report.text || pct + "%"}`,
+              "loading"
+            );
+          },
+        });
+
+        progressBar.style.display = "none";
+        setStatus(`Model ready — ${formatModelName(modelId)} loaded`, "ready");
+        questionEl.disabled = false;
+        sendBtn.disabled = false;
+        questionEl.focus();
+        loadBtn.closest(".msg")?.remove();
+        addMessage(
+          "system",
+          modelId === modelChain[0]
+            ? `✅ AI model loaded (${describeModel(modelId)}).`
+            : `✅ Loaded a smaller fallback model for this device (${describeModel(modelId)}).`
+        );
+        return;
+      } catch (err) {
+        failures.push(buildDiagnosticMessage(err, runtimeInfo, modelId));
+        console.error(`Failed to load ${modelId}`, err);
+      }
+    }
+
+    throw new Error(failures.join("\n\n---\n\n"));
   } catch (err) {
     progressBar.style.display = "none";
-    setStatus("Failed to load model: " + err.message, "");
+    questionEl.disabled = true;
+    sendBtn.disabled = true;
+    setStatus("Failed to load a compatible model", "");
     loadBtn.disabled = false;
     loadBtn.textContent = "⚡ Retry Loading Model";
-    addMessage("error", "Error loading model: " + err.message +
-      "\n\nWebGPU is required. Use Chrome 113+, Edge 113+, or Safari 18+ on a supported device.");
+    addMessage(
+      "error",
+      "Error loading model:\n\n" +
+        extractErrorMessage(err) +
+        "\n\nWebGPU is required. Chrome or Edge on a desktop/laptop will be the most reliable. On smaller devices, the page now tries smaller models automatically."
+    );
   }
 };
 
@@ -402,14 +582,24 @@ ${LARC_VEC_CONTENT}
     setStatus("Model ready — ask your question!", "ready");
   } catch (err) {
     typingEl.remove();
-    addMessage("error", "Error: " + err.message);
-    setStatus("Error — try again", "");
+    addMessage("error", "Generation error: " + extractErrorMessage(err));
+    setStatus("Generation failed — see details below", "");
+  } finally {
+    isGenerating = false;
+    sendBtn.disabled = false;
+    questionEl.focus();
   }
-
-  isGenerating = false;
-  sendBtn.disabled = false;
-  questionEl.focus();
 };
+
+window.addEventListener("error", (event) => {
+  if (event.message) {
+    reportUnexpectedError("Page error", event.error || event.message);
+  }
+});
+
+window.addEventListener("unhandledrejection", (event) => {
+  reportUnexpectedError("Unhandled promise rejection", event.reason);
+});
 
 // expose for non-module inline onclick
 window.handleKey = handleKey;
