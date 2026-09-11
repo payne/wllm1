@@ -295,6 +295,43 @@
       background: #a0aec0;
       cursor: not-allowed;
     }
+
+    #doc-selector {
+      background: #162d4f;
+      padding: 6px 16px 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    #doc-selector span {
+      font-size: 0.72rem;
+      color: #90cdf4;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .doc-option {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      color: #e2e8f0;
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+
+    .doc-option input[type="radio"] {
+      accent-color: #63b3ed;
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
   </style>
 </head>
 <body>
@@ -306,8 +343,24 @@
 
 <header>
   <h1>📻 Radio Club Knowledge Assistant</h1>
-  <p>Ask about Laurel VEC policies and the AK-SAR-BEN Amateur Radio Club bylaws</p>
+  <p>Ask about Laurel VEC policies and/or the AK-SAR-BEN Amateur Radio Club bylaws</p>
 </header>
+
+<div id="doc-selector" role="group" aria-label="Select knowledge base">
+  <span>Knowledge base:</span>
+  <label class="doc-option">
+    <input type="radio" name="doc-source" value="vec" checked />
+    Laurel VEC
+  </label>
+  <label class="doc-option">
+    <input type="radio" name="doc-source" value="bylaws" />
+    AARC Bylaws
+  </label>
+  <label class="doc-option">
+    <input type="radio" name="doc-source" value="both" />
+    Both (may exceed context limit)
+  </label>
+</div>
 
 <div id="progress-bar"><div id="progress-fill"></div></div>
 
@@ -318,7 +371,7 @@
 
 <div id="messages">
   <div class="msg system">
-    Welcome! This assistant answers questions about the <strong>Laurel Amateur Radio Club VEC</strong> and the <strong>AK-SAR-BEN Amateur Radio Club bylaws</strong>.<br><br>
+    Welcome! This assistant answers questions about the <strong>Laurel Amateur Radio Club VEC</strong> and/or the <strong>AK-SAR-BEN Amateur Radio Club bylaws</strong>. Use the selector above to choose which knowledge base to query — selecting only one helps avoid context window limits.<br><br>
     <button id="load-btn" onclick="loadModel()">⚡ Load AI Model</button>
   </div>
 </div>
@@ -337,7 +390,7 @@
 
 <script type="module">
 import { CreateMLCEngine, prebuiltAppConfig } from "https://esm.run/@mlc-ai/web-llm";
-import { REFERENCE_DOCUMENTS } from "./data.js";
+import { LARC_VEC_CONTENT, AK_SAR_BEN_BYLAWS_CONTENT, REFERENCE_DOCUMENTS } from "./data.js";
 
 const MODEL_FALLBACK_CHAIN = [
   "Llama-3.2-3B-Instruct-q4f16_1-MLC",
@@ -667,10 +720,20 @@ window.sendQuestion = async function () {
 
   setStatus("Thinking…", "loading");
 
-  const systemPrompt = `You are a helpful assistant that answers questions about the Laurel Amateur Radio Club Volunteer Examiner Coordinator (LARC VEC) and the AK-SAR-BEN Amateur Radio Club bylaws. Use ONLY the following reference documents to answer questions. Be concise and accurate. If the answer isn't in the documents, say so.
+  const docSource = document.querySelector('input[name="doc-source"]:checked')?.value ?? "vec";
+  const docContent =
+    docSource === "vec"    ? LARC_VEC_CONTENT :
+    docSource === "bylaws" ? AK_SAR_BEN_BYLAWS_CONTENT :
+                             REFERENCE_DOCUMENTS;
+  const docLabel =
+    docSource === "vec"    ? "the Laurel Amateur Radio Club Volunteer Examiner Coordinator (LARC VEC)" :
+    docSource === "bylaws" ? "the AK-SAR-BEN Amateur Radio Club bylaws" :
+                             "the Laurel Amateur Radio Club Volunteer Examiner Coordinator (LARC VEC) and the AK-SAR-BEN Amateur Radio Club bylaws";
+
+  const systemPrompt = `You are a helpful assistant that answers questions about ${docLabel}. Use ONLY the following reference documents to answer questions. Be concise and accurate. If the answer isn't in the documents, say so.
 
 --- REFERENCE DOCUMENTS ---
-${REFERENCE_DOCUMENTS}
+${docContent}
 --- END DOCUMENTS ---`;
 
   try {
