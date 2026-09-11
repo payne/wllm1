@@ -222,8 +222,6 @@ export const AK_SAR_BEN_BYLAWS_CONTENT = `
 
 Originally adopted December 12, 2006 | Amended February 8, 2008 | Amended January 13, 2012
 
-Source: User-provided text based on https://github.com/payne/wllm1 task instructions
-
 ---
 
 ## ARTICLE I: MEMBERSHIP
@@ -408,10 +406,11 @@ Secretary
 - **12-12-2006** — Bylaws originally passed
 - **2-8-2008** — Amended: ARTICLE III Sections 2, 6, 6A (new) | ARTICLE V Sections 2A, 2B | ARTICLE VI Sections 1, 2
 - **1-13-2012** — Amended: ARTICLE III Section 6 | ARTICLE IV Section 9 (new Equipment Committee), Section 9 renumbered to 10
-
-## Restoration Note
-ARTICLE III Sections 7 (Removal from Office) and 8 (Absences and Vacancies) are restored in this document. These sections were present in the original 2006 bylaws and all subsequent drafts. They do not appear in any motion or change log as having been intentionally removed, and their absence from the signed January 2012 document is believed to be a drafting error.
 `;
+
+// Source note: This bylaw text was supplied in the task prompt.
+// Restoration note: ARTICLE III Sections 7 and 8 were included per the user-supplied restoration note,
+// but the note itself is excluded from the assistant's reference text to avoid mixing commentary with bylaws.
 
 export const REFERENCE_DOCUMENTS = `
 ${LARC_VEC_CONTENT}
