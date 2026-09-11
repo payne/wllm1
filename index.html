@@ -332,7 +332,51 @@
       cursor: pointer;
       flex-shrink: 0;
     }
+    /* Markdown rendering inside assistant messages */
+    .msg.assistant p { margin: 0.5em 0; }
+    .msg.assistant p:first-child { margin-top: 0; }
+    .msg.assistant p:last-child { margin-bottom: 0; }
+    .msg.assistant ul,
+    .msg.assistant ol { margin: 0.4em 0 0.4em 1.4em; }
+    .msg.assistant li { margin: 0.15em 0; }
+    .msg.assistant h1,
+    .msg.assistant h2,
+    .msg.assistant h3 { margin: 0.6em 0 0.3em; font-size: 1em; font-weight: 700; }
+    .msg.assistant code {
+      background: #edf2f7;
+      border-radius: 3px;
+      padding: 1px 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.88em;
+    }
+    .msg.assistant pre {
+      background: #edf2f7;
+      border-radius: 6px;
+      padding: 8px 10px;
+      overflow-x: auto;
+      margin: 0.5em 0;
+    }
+    .msg.assistant pre code {
+      background: none;
+      padding: 0;
+      font-size: 0.85em;
+    }
+    .msg.assistant blockquote {
+      border-left: 3px solid #a0aec0;
+      padding-left: 10px;
+      color: #4a5568;
+      margin: 0.4em 0;
+    }
+    .msg.assistant table { border-collapse: collapse; font-size: 0.88em; margin: 0.5em 0; }
+    .msg.assistant th,
+    .msg.assistant td { border: 1px solid #cbd5e0; padding: 4px 8px; }
+    .msg.assistant th { background: #edf2f7; font-weight: 600; }
+    .msg.assistant hr { border: none; border-top: 1px solid #e2e8f0; margin: 0.5em 0; }
+    .msg.assistant strong { font-weight: 700; }
+    .msg.assistant em { font-style: italic; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js" integrity="sha384-8Trrt/O4q0xLdS8EBX7CEbNcpchKJeWbOznbIURCaucngR34jq2mTFWORXidssYv" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-hiBqrIFXTr33ywf8vPwGNK9wjI7KSxfpHTR8R6/v8ONlZUQPCRvGZ0/MCAbpQgb4" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -750,13 +794,28 @@ ${docContent}
     typingEl.remove();
     const responseEl = addMessage("assistant", "");
     let fullText = "";
+    let rafPending = false;
+    let lastRenderedText = "";
+
+    const renderMarkdown = () => {
+      if (fullText !== lastRenderedText) {
+        lastRenderedText = fullText;
+        responseEl.innerHTML = DOMPurify.sanitize(marked.parse(fullText));
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
+      rafPending = false;
+    };
 
     for await (const chunk of chunks) {
       const delta = chunk.choices[0]?.delta?.content || "";
       fullText += delta;
-      responseEl.textContent = fullText;
-      messagesEl.scrollTop = messagesEl.scrollHeight;
+      if (!rafPending) {
+        rafPending = true;
+        requestAnimationFrame(renderMarkdown);
+      }
     }
+    // Ensure final state is rendered
+    renderMarkdown();
 
     setStatus("Model ready — ask your question!", "ready");
   } catch (err) {
